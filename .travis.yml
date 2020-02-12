@@ -35,6 +35,7 @@ jobs:
         - ./setup.sh -f
     - #stage: roslint
       name: "Ros Lint"
+      allow_failures: true
       script:
         - ./setup.sh --roslint
     - stage: deploy
