@@ -37,7 +37,7 @@ jobs:
       name: "Ros Lint"
       allow_failures: true
       script:
-        - ./setup.sh --roslint
+        - ./setup.sh --roslint -f
     - stage: deploy
       name: "Docker Hub Deployment"
       skip_cleanup: true
