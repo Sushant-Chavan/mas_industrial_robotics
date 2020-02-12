@@ -32,7 +32,11 @@ jobs:
     - stage: build
       name: "Complete Build"
       script:
-        - ./setup.sh full
+        - ./setup.sh -f
+    - #stage: roslint
+      name: "Ros Lint"
+      script:
+        - ./setup.sh --roslint
     - stage: deploy
       name: "Docker Hub Deployment"
       skip_cleanup: true
