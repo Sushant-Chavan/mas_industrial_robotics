@@ -74,23 +74,49 @@ function build_mas_industrial_robotics {
     source ~/catkin_ws/devel/setup.bash
     # Disable building the youbot_driver_ros_interface in travis CI as it expects a user input during build
     touch ~/catkin_ws/src/youbot_driver_ros_interface/CATKIN_IGNORE
-    catkin build
+
+    if $1
+        then
+            ROS_LINT_ARG="--make-args roslint"
+    fi
+
+    catkin build $ROS_LINT_ARG
 }
 
+function parse_arguments {
+    FULL_INSTALL=false
+    ROS_LINT=false
+
+    if [ $# -eq 0 ]
+    then
+        echo "Default mode activated. Assuming that ROS is installed in the system."
+    else
+        for i in "$@"
+            do
+            case $i in
+                -f|--full)
+                FULL_INSTALL=true
+                echo "FULL_INSTALL mode activated, ROS will be installed before mas_industrial_robotics"
+                shift # past argument=value
+                ;;
+                --roslint)
+                ROS_LINT=true
+                echo "ROSLINT activated"
+                shift # past argument=value
+                ;;
+            esac
+        done
+    fi
+}
 
 # Begin shell command executions from here
 # Store the root directory path in a variable
 ROOT_DIR=$(pwd)
-
-FULL_INSTALL=false
-if [ $# -eq 1 ] && [ $1 == "full" ]
-    then
-        FULL_INSTALL=true
-fi
+parse_arguments "$@"
 
 install_basic_packages
 install_ros $FULL_INSTALL
 setup_catkin_ws
 get_mas_industrial_robotics
-build_mas_industrial_robotics
+build_mas_industrial_robotics $ROS_LINT
 fancy_print "Build Complete"
